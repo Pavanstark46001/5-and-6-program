@@ -1,0 +1,57 @@
+
+vi moviedetails.txt
+
+hadoop fs -mkdir /user/cloudera
+
+hadoop fs -put moviedetails.txt /user/cloudera
+
+hive
+
+create database moviework;
+
+create table movie_details(cust_id int, movie_id int, activity int, genere_id int, recommended string, time string, rating int, price int, position int)row format delimited fields terminated by '\t' storedas textfile;
+
+load data inpath '/user/cloudera/moviedetails.txt' into movie_details;
+
+select * from movie_details;
+
+CREATE EXTERNAL TABLE movieapp_logs ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.avro.AvroSerDe' STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat' tblproperties ('avro.schema.literal' = '{"name" : "my_record", "type" : "record", "fields" : [{"name" : "cust_id", "type" : "int"}, {"name" : "movie_id", "type" : "int"}, {"name" : "activity", "type" : "int"}, {"name" : "genere_id", "type" : "int"}, {"name" : "recommended", "type" : "string"}, {"name" : "time", "type" : "string"}, {"name" : "rating", "type" : ["int", "null"], "default" : "null"}, {"name" : "price", "type" : ["int", "null"], "default" : "null"},{"name" : "position", "type" : ["int", "null"], "default" : "null"} ]}');
+
+
+insert overwrite table movieapp_logs select * from movie_details;
+
+
+select * from movieapp_logs;
+
+
+Query 1
+select cust_id, movie_id, CASE WHEN genere_id > 0 THEN genere_id ELSE -1 END genere_id, time, CASE recommended WHEN 'Y' THEN 1 ELSE 0 END recommended, activity, price FROM movieapp_logs WHERE activity IN (2,4,5,11);
+
+Query 2
+SELECT m1.cust_id, m1.movie_id, CASE WHEN m1.genere_id > 0 THEN m1.genere_id ELSE -1 END genere_id, m1.time, CASE m1.recommended WHEN 'Y' THEN 1 ELSE 0 END recommended, m1.activity, m1.rating FROM movieapp_logs m1 JOIN(SELECT cust_id, movie_id, CASE WHEN genere_id > 0 THEN genere_id ELSE -1 END genere_id, MAX(time) max_time,activity FROM movieapp_logs GROUP BY cust_id, movie_id, genere_id, activity) m2 ON ( m1.cust_id = m2.cust_id AND m1.movie_id = m2.movie_id AND m1.genere_id = m2.genere_id AND m1.time = m2.max_time AND m1.activity =1 AND m2.activity = 1);
+
+Query 3
+select MIN(time), MAX(time) FROM movieapp_logs;
+
+
+
+
+
+program 6
+
+use movieworks;
+
+
+create table movieapp_logs_stage(cust_id int, movie_id int, genere_id int, time string, recommended int, activity int, rating int, sales float)row format delimited fields terminated by '\t';
+
+
+
+INSERT OVERWRITE TABLE movieapp_logs_stage SELECT * FROM ( SELECT cust_id, movie_id, CASE WHEN genere_id > 0 THEN genere_id ELSE -1 END genere_id, time, CAST((CASE recommended WHEN 'Y' THEN 1 ELSE 0 END) AS INT) recommended, activity, cast(null AS INT) rating, price FROM movieapp_logs WHERE activity IN (2,4,5,11) UNION ALL SELECT m1.cust_id, m1.movie_id, CASE WHEN m1.genere_id > 0 THEN m1.genere_id ELSE -1 END genere_id, m1.time, CAST((CASE m1.recommended WHEN 'Y' THEN 1 ELSE 0 END) AS INT) recommended, m1.activity, m1.rating, cast(null as float) price FROM movieapp_logs m1 JOIN( SELECT cust_id, movie_id, CASE WHEN genere_id > 0 THEN genere_id ELSE -1 END genere_id, MAX(time) max_time, activity FROM movieapp_logs GROUP BY cust_id, movie_id, genere_id, activity) m2 ON ( m1.cust_id = m2.cust_id AND m1.movie_id = m2.movie_id AND m1.genere_id = m2.genere_id AND m1.time = m2.max_time AND m1.activity = 1 AND m2.activity = 1 ))union_result;
+
+
+select * from movieapp_logs_stage;
+
+
+
+
+

@@ -1,0 +1,6 @@
+movieid	title	genre
+1	kalpana	horror
+2	adyaksha	comedy
+3	iloveyou	romantic
+4	vikrantrona	thriller
+5	kantara	horror

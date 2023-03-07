@@ -1,0 +1,81 @@
+1.Start by reviewing HDFS. You will find that its composition is similar to your local Linux file
+  system. You will use the hadoop fs command when interacting with HDFS.
+  • Review the commands available for the Hadoop Distributed File System:
+  • Copy file foo.txt from local disk to the user’s directory in HDFS
+  • Get a directory listing of the user’s home directory in HDFS
+  • Get a directory listing of the HDFS root directory
+  • Display the contents of the HDFS file  /user/cloudera/fred/bar.txt
+
+
+Step 1:  Review the commands for HDFS
+
+       $ sudo /home/cloudera/cloudera-manager --force --express
+	
+       $ sudo jps |grep Node
+
+       $ hadoop fs
+	 
+ 	   or
+  
+       $ hdfs dfs		
+
+
+Step 2 : Copy file foo.txt from local disk to user’s directory in HDFS
+	 first create file foo.txt
+        
+	 $ vi foo.txt
+	
+Step 3: Copy the file foo.txt from  current working directory to user directory in HDFS, use the
+        
+	$  hadoop fs -put foo.txt  /user/cloudera
+
+
+Step 4 : Get a directory listing of the user’s Home directory in HDFS
+	
+	$ hadoop fs -ls /user/cloudera
+
+
+Step 5: Get a directory listing of the HDFS root directory
+	
+	$ hadoop fs -ls  /
+
+Step 6: Display the contents of the HDFS file  /user/cloudera/fred/bar.txt
+	
+	$ hadoop fs -mkdir /user/cloudera/fred
+	
+	$ vi bar.txt
+	
+	$ hadoop fs -put  bar.txt /user/cloudera/fred
+
+	$ hadoop fs -cat /user/cloudera/fred/bar.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

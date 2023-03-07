@@ -1,0 +1,46 @@
+a. Create two matrices and perform multiplication &amp; division on the matrices.
+Code:
+
+
+matrix1<- matrix (c (3,9,-1,4,2,6), nrow=2)
+print(matrix1)
+matrix2<- matrix (c (5,2,0,9,3,4), nrow=2)
+print(matrix2)
+result<-matrix1*matrix2
+cat ("Result of multiplication",  "\n")
+print(result)
+result<-matrix1/matrix2
+cat ("Result of division","\n")
+print(result)
+
+
+
+
+b. Create a data frame and print the data frame, structure of data frame and summary of
+data frame.
+Code:
+
+
+emp.data<- data.frame(
+emp.id= c (1:5),
+emp_name = c("suma","vatsala","usha","asha","swathi"),
+salary = c (623.3, 515.2, 611.0, 729.0, 843.25),
+start_date= as.Date (c ("2012-01-01","2013-09-23","2014-11-15","2014-05-11","2015-03-27")),
+stringsAsFactors = FALSE
+)
+result<-data.frame(emp.data$emp_name, emp.data$salary)
+print(result)
+
+
+c. Create a Bar chart and sketch the Bar chart by taking months as input &amp; plot it against
+revenue. Also, add legend to the chart that includes regions.
+Code:
+
+
+colors<-c("green","orange","brown")
+months<-c("mar","apr","may","jun","jul")
+regions<-c("east","west","north")
+Values<-matrix (c (2,9,3,11,9,4,8,7,3,12,5,2,8,10,11),nrow=3, ncol=5, byrow=TRUE)
+ 
+barplot (Values,main= "total revenue",names.arg= months, xlab= "month", ylab= "revenue",col=colors)
+dev.off()

@@ -1,0 +1,101 @@
+Using movie ratings data, Develop the queries in Hive for the following..
+
+a, List all the Users who have rated the movies(users who have rated at least one movie)
+b, List all the User with the max, min, avg ratings they have given against any movie
+c, List all the movies with the max, min, avg ratings given by the user
+
+1. create 3 text files and add contents to it as shown in below
+$ vi movie.txt
+
+movieid	title	genre
+1	kalpana	horror
+2	adyaksha	comedy
+3	iloveyou	romantic
+4	vikrantrona	thriller
+5	kantara	horror
+
+$ vi users.txt
+
+userid	name
+400	dhanraj
+401	dhanush
+402	jyothi
+403	nayana
+404	pavan
+405	prakash
+
+
+$ vi ratings.txt
+
+
+
+2. Copy the file from root to hdfs
+
+$ hadoop fs -mkdir /user/cloudera/hivedata
+$ hadoop fs -put movie.txt /user/cloudera/hivedata
+$ hadoop fs -put user.txt /user/cloudera/hivedata
+$ hadoop fs -put rating.txt /user/cloudera/hivedata
+
+3. To launch the Hive, give the command hive
+$ hive
+
+create database
+
+hive> create database moviework;
+
+use that database
+
+hive> use moviework;
+
+create 3 tables movie, ratings, users as shown below
+
+hive> create table movie(movieid int,title string,genre string) row format delimited fields terminated by '\t' lines terminated by '\n' stored as textfile TBLPROPERTIES('serialization.null.format'='NULL');
+OK
+Time taken: 4.378 seconds
+hive> create table ratings(userid int,movieid int,rating int) row format delimited fields terminated by '\t' lines terminated by '\n' stored as textfile TBLPROPERTIES('serialization.null.format'='NULL');
+OK
+Time taken: 0.4 seconds
+hive> create table users(userid int,name string) row format delimited fields terminated by '\t' lines terminated by '\n' stored as textfile TBLPROPERTIES('serialization.null.format'='NULL');
+OK
+Time taken: 0.31 seconds
+
+4. Load data into the tables created from the text files as shown below
+
+hive> load data inpath '/user/cloudera/hivedata/movie.txt' into table movie;
+
+Loading data to table default.movie
+chgrp: changing ownership of 'hdfs://quickstart.cloudera:8020/user/hive/warehouse/movie/movie.txt': User does not belong to hive
+Table default.movie stats: [numFiles=1, totalSize=115]
+OK
+Time taken: 3.816 seconds
+
+hive> load data inpath '/user/cloudera/hivedata/user.txt' into table users;
+
+Loading data to table default.users
+chgrp: changing ownership of 'hdfs://quickstart.cloudera:8020/user/hive/warehouse/users/user.txt': User does not belong to hive
+Table default.users stats: [numFiles=1, totalSize=80]
+OK
+Time taken: 1.241 seconds
+
+hive> load data inpath '/user/cloudera/hivedata/rating.txt' into table ratings;
+
+Loading data to table default.ratings
+chgrp: changing ownership of 'hdfs://quickstart.cloudera:8020/user/hive/warehouse/ratings/rating.txt': User does not belong to hive
+Table default.ratings stats: [numFiles=1, totalSize=71]
+OK
+Time taken: 1.338 seconds
+
+5. now execute the queries
+
+
+Query 1: List all the Users who have rated the movies(users who have rated at least one movie)
+
+hive> select distinct(users.userid),users.name from users join ratings on users.userid=ratings.userid;
+
+Query 2: List all the User with the max, min, avg ratings they have given against any movie
+
+hive> select users.userid,max(ratings.rating),min(ratings.rating),avg(ratings.rating) from users join ratings on users.userid=ratings.userid group by users.userid;
+
+Query 3: List all the movies with the max, min, avg ratings given by the user
+
+hive> select movies.movieid, max(ratings.rating), min(ratings.rating),avg(ratings.rating) from movie join ratings on movie.movieid=ratings.movieid group by movie.movieid;

@@ -1,0 +1,29 @@
+2.Start by reviewing HDFS. You will find that its composition is similar to your local Linux file
+system. You will use the hadoop fs command when interacting with HDFS.
+
+• Move that file to the local disk, named as baz.txt
+• Create a directory called input under the user’s home directory
+• Delete the directory input old and all its contents
+• Verify the copy by listing the directory contents in HDFS.
+• Move the file to the local disk named as baz.txt
+
+
+Step 1:  Move that file to the local disk, named as baz.txt
+
+	$ hadoop fs -get /user/cloudera/fred/bar.txt baz.txt
+
+
+Step 2 : Create a directory called input under the user’s home directory
+	
+	$ hadoop fs -mkdir /user/cloudera/input
+
+	$ hadoop fs -ls /user/cloudera
+
+Step 3: Delete the directory input old and all its contents
+
+	$ hadoop fs -rm -r /user/cloudera/input	
+
+
+Step 4 :Verify the copy by listing the directory contents in HDFS.	
+	
+	$ hadoop fs -ls /user/cloudera

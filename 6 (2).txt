@@ -1,0 +1,13 @@
+create database movie;
+
+use movie;
+
+create table movieapp_log(userid int,movieid int,rating int,recommended string,genereid int, genere string, time string,activity int) row format delimeted fields terminated by ',';
+
+SELECT userid,movieid,rating,CASE recommended WHEN 'Y' THEN 1 ELSE 0 END recommended,CASE WHEN genereid> 0 THEN genereid ELSE -1 END genereid,time,activity FROM movieapp_log  WHERE activity IN (1,2,4,5);
+
+create table movieapp_log_stage(userid int,movieid int,rating int,recommended int,genereid int, time string,activity int) row format delimeted fields terminated by '\t';
+
+INSERT OVERWRITE TABLE movieapp_log_stage SELECT userid,movieid,rating,CASE recommended WHEN 'Y' THEN 1 ELSE 0 END recommended,CASE WHEN genereid> 0 THEN genereid ELSE -1 END genereid,time,activity FROM movieapp_log  WHERE activity IN (1,2,4,5);
+
+SELECT * FROM movieapp_log_stage;
